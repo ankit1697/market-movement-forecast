@@ -1,0 +1,8 @@
+# MLflow runs
+mlruns/
+
+# data
+data/
+
+# env
+.env

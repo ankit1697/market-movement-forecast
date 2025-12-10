@@ -1,0 +1,12 @@
+[
+  "sentiment_Airlines",
+  "sentiment_Automobile",
+  "sentiment_Corporate",
+  "sentiment_Economy",
+  "sentiment_Energy",
+  "sentiment_Geo-Political",
+  "sentiment_Healthcare",
+  "sentiment_Technology",
+  "sentiment_US Politics",
+  "overall_sentiment"
+]
