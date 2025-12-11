@@ -22,7 +22,7 @@ The result is a reproducible, extensible workflow that represents how a financia
 
 ## 2. Data Sources and Topic classification
 
-### **2.1. Data sources**
+### **2.1. News Data**
 The project collects and processes more than **53,000 news articles** from _CNBC_, _The Guardian_, and _Reuters_ between late 2017 and late 2020.
 
 The raw datasets differ in structure, formatting, and text quality, so a comprehensive preprocessing pipeline was implemented.
@@ -35,24 +35,36 @@ Key steps include:
 
 This produces a unified news dataset that can be reliably merged with market data.
 
-### **2.2. Topic Classification (Sector Labeling)**
+### **2.2. S&P 500 Data**
+Daily S&P 500 data (Open, High, Low, Close, Volume) is merged with the news-derived features, using the Yahoo Finance API
+
+## 3. Topic Classification (Sector Labeling)**
 Each article is assigned to a topic or sector, allowing the system to compute sector-level sentiment indicators.
 
-**Categories include:**
+**Categories created:**
 **Technology, Economy, Energy, Healthcare, Geo-Political, Automobile, Airlines, US Politics,  and Corporate.**
+
+Uses:
+    - ProsusAI/finbert as an encoder
+    - Natural language descriptions for categories
+    - Cosine similarity + softmax to produce probabilities
 
 The classification approach combines keyword-based mapping and language-model-assisted evaluation. This structured labeling enriches the sentiment features by making it possible to evaluate whether certain sectors carry more predictive power than others.
 
-## 3. Sentiment Analysis Framework
+## 4. Sentiment Analysis Framework
 A major component of the project is transforming unstructured text into measurable sentiment signals. To improve robustness, the project employs three independent sentiment engines, each offering a different perspective:
 
-### **3.1 VADER (NLTK)**
+### **4.1 VADER (NLTK)**
 A lexicon-based sentiment analyzer optimized for social media and general news.
 It provides quick polarity scores (positive, neutral, negative) and is useful as a starting point.
-### **3.2 GPT-4o-Mini (LLM Sentiment Evaluation)**
+### **4.2 Ollama Gemma3**
+A locally hosted gemma3:4b model is used to get the sentiment and confidence scores for all the news articles
+### **4.3 GPT-4o-Mini**
 An advanced large language model is used to classify sentiment and provide a confidence score. The model is prompted with a consistent evaluation format to ensure deterministic output. This LLM-based signal often captures tone, implication, and narrative context beyond simple polarity.
-### 3.3 Daily Sentiment Aggregation
 
+## 5. Feature Engineering
+
+### 5.1 Creating sentiment scores
 After sentiment is assigned at the article level, signals are aggregated **per day** and **per category**.
 
 For each date, the pipeline computes:
@@ -69,8 +81,7 @@ $$
 
 The output is a structured time-series dataset that can be merged directly with financial market data.
 
-## 4. Market Data and Label Creation
-Daily S&P 500 data (Open, High, Low, Close, Volume) is merged with the news-derived features.
+### 5.2 Creating target labels for modeling
 Several target variables are created to support different modeling tasks:
 1.  **Regression target**:
     Next-day percentage return (return_t_plus_1)
@@ -85,10 +96,9 @@ Several target variables are created to support different modeling tasks:
   This variety of targets allows the project to evaluate:
 
 -   Whether sentiment can predict direction even if it cannot predict magnitude
-    
 -   Whether coarser target definitions yield more stable patterns
 
-## **5. Modeling and AutoML**
+## 6. Modeling and AutoML
 The project uses **PyCaret AutoML** to systematically evaluate a wide range of models for each target type. This includes tree-based models, linear models, ensemble methods, gradient boosting, and more.
 
 For each modeling task:
@@ -103,7 +113,7 @@ Metrics include:
 
 All results are considered to refine and ultimately we will derive the chosen algorithm.
 
-## **6. Experiment Tracking with MLflow**
+## 7. Experiment Tracking with MLflow
 
 MLflow is used extensively to record:
 -   Model configuration and parameters
@@ -116,7 +126,7 @@ The experiment tracking interface enables:
 -   Re-running and reproducing historical experiments
 -   Selecting the best model for deployment based on results
 
-## **7. Deployment Pipeline**
+## 8. Deployment Pipeline
 
 The best performing model is registered and deployed using **MLflow Models**, enabling simple, portable serving.
 - Deploys the model using:
@@ -159,7 +169,7 @@ except Exception:
     print("Response is not valid JSON.")
 ```
 
-## **8. Model Monitoring with Evidently AI**
+## 9. Model Monitoring with Evidently AI
 To simulate a production monitoring environment, the project integrates **Evidently** to track:
 -   Data drift
 -   Target drift
@@ -170,7 +180,7 @@ This provides early detection of model degradation, which is particularly import
 
 Monitoring reports are generated in both notebook and HTML formats and stored for analysis.
 
-##  **9. Repository Structure**
+## 10. Repository Structure
 
 ```text
 market-movement-forecast/
@@ -201,7 +211,55 @@ market-movement-forecast/
 └── README.md
 ```
 
-## **10. Findings and Key Insights**
+## 11. Setting up the project
+Steps to set up and run the full pipeline locally:
+
+### 1. Clone the repository
+```
+git clone https://github.com/ankit1697/market-movement-forecast.git
+cd market-movement-forecast
+```
+
+### 2. Create and activate a virtual environment
+```
+python -m venv mlops_env
+source mlops_env/bin/activate   # macOS/Linux
+mlops_env\Scripts\activate      # Windows
+```
+
+### 3. Install dependencies
+```
+pip install -r requirements.txt
+```
+
+### 4. Run the data processing & experimentation scripts
+scripts/
+ ├── finbert_news_classifier.py
+ ├── ollama_news_sentiment.py
+ ├── category_sentiment_scores.py
+
+notebooks/
+ └── model_training_random_forest.ipynb
+
+### 5. Serve the trained model using MLflow
+Find your `run_id` from the MLflow UI (`mlruns/` folder is created automatically), then start the server:
+```
+mlflow models serve \
+    -m "runs:/<run_id>/model" \
+    -p 5001 \
+    --no-conda
+```
+
+This exposes a REST endpoint at:
+`http://127.0.0.1:5001/invocations`
+
+### 6. Run inference on new data
+```
+python scripts/inference.py
+```
+
+
+## 12. Findings and Key Insights
 
 -   Stock market returns are notoriously close to a **random walk**, and news sentiment is only **weakly correlated** with next-day returns in a linear sense. However, non-linear models still uncover meaningful structure: our four-bucket return classifier achieves **~30% F1/accuracy**, and binary up/down classification exceeds **50% accuracy**, suggesting the market may not be entirely random after all.
     
@@ -214,6 +272,14 @@ market-movement-forecast/
 -   **MLflow** is useful for structured experiment tracking, especially in workflows involving many models, feature subsets, and parameter variations.
     
 -   **Continuous monitoring** is mandatory in financial machine learning. Market and news distributions shift constantly, making drift detection and periodic model recalibration a critical part of the pipeline.
+
+
+## 13. Contributors
+- **[Ankit Agrawal](https://github.com/ankit1697)**
+- **[Anuja Tipare](https://github.com/anuja2900)**
+- **[Hritik Jhaveri](https://github.com/codex83)**
+- **[Ronachart Partihuttakorn](https://github.com/ultraronachart)**
+
 
 ---
 
