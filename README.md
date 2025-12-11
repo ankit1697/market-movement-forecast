@@ -38,7 +38,7 @@ This produces a unified news dataset that can be reliably merged with market dat
 ### **2.2. S&P 500 Data**
 Daily S&P 500 data (Open, High, Low, Close, Volume) is merged with the news-derived features, using the Yahoo Finance API
 
-## 3. Topic Classification (Sector Labeling)**
+## 3. Topic Classification (Sector Labeling)
 Each article is assigned to a topic or sector, allowing the system to compute sector-level sentiment indicators.
 
 **Categories created:**
