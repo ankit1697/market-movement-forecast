@@ -28,11 +28,10 @@ The project collects and processes more than **53,000 news articles** from _CNBC
 The raw datasets differ in structure, formatting, and text quality, so a comprehensive preprocessing pipeline was implemented.
 
 Key steps include:
-	•	Normalizing timestamp formats to ensure consistent daily aggregation
-	•	Cleaning text fields for whitespace, line breaks, and formatting inconsistencies
-	•	Resolving duplicated articles
-	•	Creating a canonical structure containing:
-time, date, headline, description, and source
+- Normalizing timestamp formats to ensure consistent daily aggregation
+- Cleaning text fields for whitespace, line breaks, and formatting inconsistencies
+- Resolving duplicated articles
+- Creating a canonical structure containing: time, date, headline, description, and source
 
 This produces a unified news dataset that can be reliably merged with market data.
 
@@ -52,16 +51,23 @@ A lexicon-based sentiment analyzer optimized for social media and general news.
 It provides quick polarity scores (positive, neutral, negative) and is useful as a starting point.
 ### **3.2 GPT-4o-Mini (LLM Sentiment Evaluation)**
 An advanced large language model is used to classify sentiment and provide a confidence score. The model is prompted with a consistent evaluation format to ensure deterministic output. This LLM-based signal often captures tone, implication, and narrative context beyond simple polarity.
-### **3.3 Daily Sentiment Aggregation**
+### 3.3 Daily Sentiment Aggregation
+
 After sentiment is assigned at the article level, signals are aggregated **per day** and **per category**.
 
 For each date, the pipeline computes:
--   The number of positive, negative, and neutral articles
--   Sector-level sentiment scores
--   An overall market sentiment score defined as:
-sentiment\_score = \frac{\text{positive} - \text{negative}}{\text{positive} + \text{negative} + \text{neutral}}
 
-The output is a structured time series dataset that can be merged directly with financial market data.
+- The number of positive, negative, and neutral articles  
+- Sector-level sentiment scores  
+- An overall market sentiment score defined as:
+
+$$
+\text{sentiment\_score} =
+\frac{\text{positive} - \text{negative}}
+{\text{positive} + \text{negative} + \text{neutral}}
+$$
+
+The output is a structured time-series dataset that can be merged directly with financial market data.
 
 ## 4. Market Data and Label Creation
 Daily S&P 500 data (Open, High, Low, Close, Volume) is merged with the news-derived features.
@@ -176,8 +182,6 @@ This provides early detection of model degradation, which is particularly import
 Monitoring reports are generated in both notebook and HTML formats and stored for analysis.
 
 ##  **9. Repository Structure**
-
-## 9. Repository Structure
 
 ```text
 market-movement-forecast/
