@@ -177,22 +177,26 @@ market-movement-forecast/
 │
 ├── data/                           # Raw & processed data (ignored in repo)
 │
-├── src/
-│   ├── data/
-│   │   ├── gpt4o_sentiment.py          # GPT-4o sentiment scoring
-│   │   ├── finbert_news_classifier.py  # Topic/category assignment
-│   │   └── category_sentiment_scores.py# Daily sentiment aggregation
+├── scripts/
+|   ├── inference.py                s# Model inference script
+│   ├── gpt4o_sentiment.py          # GPT-4o sentiment scoring
+│   ├── ollama_news_sentiment.py    # Gemma 3 sentiment scoring
+│   ├── finbert_news_classifier.py  # Topic/category assignment
+│   └── category_sentiment_scores.py# Daily sentiment aggregation
 │   │
-│   ├── models/
-│   │   └── inference.py                # Client for MLflow deployment
+│   ├── config/
+│   │   └── configs.py              # Config settings
 │   │
-│   └── training/
-│       └── train_model.py              # Model training with MLflow logging
+│   └── notebooks/
+│       └── modelling_training_random_forest.ipynb   # Model training with MLflow logging
 │
-├── notebooks/
-│   └── model_training.ipynb            # Exploratory model dev notebook
+├── testing/
+│   └── modelling_training_automl.ipynb # Exploratory model notebook with AutoML testing
+|
+├── mlruns/                             # To log and track MLFlow runs
 │
 ├── feature_names.json                  # Saved feature order for inference
+├── sp500_monitoring.txt                # Monitoring dashboard
 ├── requirements.txt                    # Python dependencies
 └── README.md
 ```
