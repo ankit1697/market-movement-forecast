@@ -233,13 +233,14 @@ pip install -r requirements.txt
 ```
 
 ### 4. Run the data processing & experimentation scripts
+```text
 scripts/
  ├── finbert_news_classifier.py
  ├── ollama_news_sentiment.py
  ├── category_sentiment_scores.py
-
 notebooks/
  └── model_training_random_forest.ipynb
+```
 
 ### 5. Serve the trained model using MLflow
 Find your `run_id` from the MLflow UI (`mlruns/` folder is created automatically), then start the server:
