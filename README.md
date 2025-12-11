@@ -123,52 +123,41 @@ The best performing model is registered and deployed using **MLflow Models**, en
 `mlflow models serve --model-uri <run_id> --port 5001 --no-conda`
 - Includes an inference client script to send new feature rows for prediction using the code below
 
-`import json`
+```
+import json
+import pandas as pd
+import requests
 
-`import pandas as pd`
+# Load feature order
+with open("../feature_names.json", "r") as f:
+    feature_list = json.load(f)
 
-`import requests`
+# Prepare inference dataframe
+df_new = score_df.copy(deep=True)
 
-`# Load feature order`
+X_new = df_new[feature_list]
 
-`with open("../feature_names.json", "r") as f:
-    feature_list = json.load(f)`
-
-`# Prepare inference dataframe`
-
-`df_new = score_df.copy(deep=True)`
-
-`X_new = df_new[feature_list]`
-
-`# MLflow serving payload`
-
-`payload = {
+# MLflow serving payload
+payload = {
     "dataframe_split": X_new.to_dict(orient="split")
-}`
+}
 
-`# MLflow endpoint`
+# MLflow endpoint
+url = "http://127.0.0.1:5001/invocations"
+headers = {"Content-Type": "application/json"}
 
-`url = "http://127.0.0.1:5001/invocations"`
+# Send request
+response = requests.post(url, headers=headers, data=json.dumps(payload))
 
-`headers = {"Content-Type": "application/json"}`
+print("Status:", response.status_code)
+print("Raw response text:", response.text)
 
-`# Send request`
-
-`response = requests.post(url, headers=headers, data=json.dumps(payload))`
-
-`print("Status:", response.status_code)`
-
-`print("Raw response text:", response.text)`
-
-`# Try to parse JSON predictions`
-
-`try:`
-
-    `print("Predictions:", response.json())`
-
-`except Exception:`
-
-    `print("Response is not valid JSON.")`
+# Try to parse JSON predictions
+try:
+    print("Predictions:", response.json())
+except Exception:
+    print("Response is not valid JSON.")
+```
 
 ## **8. Model Monitoring with Evidently AI**
 To simulate a production monitoring environment, the project integrates **Evidently** to track:
