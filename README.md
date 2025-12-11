@@ -62,7 +62,7 @@ For each date, the pipeline computes:
 - An overall market sentiment score defined as:
 
 $$
-\text{sentiment\_score} =
+\text{sentiment\-score} =
 \frac{\text{positive} - \text{negative}}
 {\text{positive} + \text{negative} + \text{neutral}}
 $$
