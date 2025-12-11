@@ -20,7 +20,7 @@ However, the focus is broader than building a predictive model. The project aims
     
 The result is a reproducible, extensible workflow that represents how a financial ML system would operate in a production environment.
 
-## 2. Data Sources and Topic classification
+## 2. Data Sources
 
 ### **2.1. News Data**
 The project collects and processes more than **53,000 news articles** from _CNBC_, _The Guardian_, and _Reuters_ between late 2017 and late 2020.
