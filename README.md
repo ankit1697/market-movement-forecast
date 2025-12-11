@@ -177,28 +177,32 @@ Monitoring reports are generated in both notebook and HTML formats and stored fo
 
 ##  **9. Repository Structure**
 
+## 9. Repository Structure
+
+```text
 market-movement-forecast/
 │
-│ ── data/ # Raw & processed data (ignored in repo)
+├── data/                           # Raw & processed data (ignored in repo)
 │
-│ ── src/
-│ │ ── data/
-│ │ │  ── gpt4o_sentiment.py # GPT-4o sentiment scoring
-│ │ │  ── finbert_news_classifier.py # Topic/category assignment
-│ │ │  ── category_sentiment_scores.py # Daily sentiment scores
-│ │
-│ │ ── models/
-│ │ └── inference.py # Client for deployed MLflow model
-│ │
-│ │ ── training/
-│ │ └── train_model.py # Model training with MLflow logging
+├── src/
+│   ├── data/
+│   │   ├── gpt4o_sentiment.py          # GPT-4o sentiment scoring
+│   │   ├── finbert_news_classifier.py  # Topic/category assignment
+│   │   └── category_sentiment_scores.py# Daily sentiment aggregation
+│   │
+│   ├── models/
+│   │   └── inference.py                # Client for MLflow deployment
+│   │
+│   └── training/
+│       └── train_model.py              # Model training with MLflow logging
 │
-│── notebooks/
-│ └── model_training.ipynb
+├── notebooks/
+│   └── model_training.ipynb            # Exploratory model dev notebook
 │
-│── feature_names.json # Saved feature order for inference
-│── requirements.txt
+├── feature_names.json                  # Saved feature order for inference
+├── requirements.txt                    # Python dependencies
 └── README.md
+```
 
 ## **10. Findings and Key Insights**
 
